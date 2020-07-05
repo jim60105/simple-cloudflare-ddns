@@ -15,7 +15,7 @@ then
         echo "No Change in IP Adddress"
 else
 curl -X PUT "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records/YOUR_DNS_RECORDS" \
-     -H "X-Auth-Email: jYOUR_EMAIL@gmail.com" \
+     -H "X-Auth-Email: YOUR_EMAIL@gmail.com" \
      -H "X-Auth-Key: YOUR_GLOBAL_API_KEY" \
      -H "Content-Type: application/json" \
      --data '{"type":"A","name":"YOUR_A_RECORD_NAME","content":"'$NEW_IP'","proxied":false}' > /dev/null
