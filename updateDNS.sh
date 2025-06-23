@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2025 陳鈞, licensed under GPL-3.0-or-later
+# Copyright (C) 2020 陳鈞, licensed under GPL-3.0-or-later
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
