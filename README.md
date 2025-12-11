@@ -161,4 +161,4 @@ You can use any service that returns your public IP as plain text:
 
 ## License
 
-This project is licensed under the GPL-3.0-or-later License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the AGPL-3.0-or-later License - see the [LICENSE](LICENSE) file for details.
