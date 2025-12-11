@@ -5,14 +5,14 @@ ARG RELEASE=0
 
 ########################################
 # Base stage
-# This is an alpine image with busybox
+# This is an alpine image with curl
 ########################################
-FROM docker.io/curlimages/curl:8.17.0 as base
+FROM docker.io/curlimages/curl:8.17.0 AS base
 
 ########################################
 # Final stage
 ########################################
-FROM base as final
+FROM base AS final
 
 # Create user
 ARG UID
@@ -20,6 +20,7 @@ RUN adduser -g "" -D $UID -u $UID -G root
 
 # Create directories with correct permissions
 RUN install -d -m 775 -o $UID -g 0 /app && \
+    install -d -m 775 -o $UID -g 0 /data && \
     install -d -m 775 -o $UID -g 0 /licenses
 
 # Copy licenses (OpenShift Policy)
@@ -29,13 +30,14 @@ COPY --link --chown=$UID:0 --chmod=775 updateDNS.sh /app/
 
 WORKDIR /app
 
+# Persistent data directory for IP cache files
+VOLUME [ "/data" ]
+
 USER $UID
 
 STOPSIGNAL SIGINT
 
-# Use dumb-init as PID 1 to handle signals properly
-ENTRYPOINT [ "sh", "updateDNS.sh" ]
-CMD ["--help"]
+ENTRYPOINT [ "sh", "/app/updateDNS.sh" ]
 
 ARG VERSION
 ARG RELEASE
