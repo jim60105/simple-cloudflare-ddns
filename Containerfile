@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:1
-ARG UID=1001
+ARG UID=curl_user
 ARG VERSION=EDGE
 ARG RELEASE=0
 
 ########################################
 # Base stage
 # This is an alpine image with curl
+# https://github.com/curl/curl-container
 ########################################
 FROM docker.io/curlimages/curl:8.17.0 AS base
 
@@ -14,30 +15,22 @@ FROM docker.io/curlimages/curl:8.17.0 AS base
 ########################################
 FROM base AS final
 
-# Create user
-ARG UID
-RUN adduser -g "" -D $UID -u $UID -G root
-
 # Create directories with correct permissions
-RUN install -d -m 775 -o $UID -g 0 /app && \
-    install -d -m 775 -o $UID -g 0 /data && \
-    install -d -m 775 -o $UID -g 0 /licenses
+RUN install -d -m 775 /home/curl_user/data && \
+    install -d -m 775 /home/curl_user/licenses
 
 # Copy licenses (OpenShift Policy)
-COPY --link --chown=$UID:0 --chmod=775 LICENSE /licenses/
+COPY --link --chown=$UID:0 --chmod=775 LICENSE /home/curl_user/licenses/
 
-COPY --link --chown=$UID:0 --chmod=775 updateDNS.sh /app/
-
-WORKDIR /app
+# Copy main script
+COPY --link --chown=$UID:0 --chmod=775 updateDNS.sh /home/curl_user/
 
 # Persistent data directory for IP cache files
-VOLUME [ "/data" ]
-
-USER $UID
+VOLUME [ "/home/curl_user/data" ]
 
 STOPSIGNAL SIGINT
 
-ENTRYPOINT [ "sh", "/app/updateDNS.sh" ]
+ENTRYPOINT [ "sh", "/home/curl_user/updateDNS.sh" ]
 
 ARG VERSION
 ARG RELEASE
@@ -53,4 +46,4 @@ LABEL name="jim60105/simple-cloudflare-ddns" \
     release=${RELEASE} \
     io.k8s.display-name="simple-cloudflare-ddns" \
     summary="A simple Cloudflare Dynamic DNS updater" \
-    description="For more information about this tool, please visit the following website: https://github.com/jim60105/simple-cloudflare-ddns"
+    description="A simple Cloudflare Dynamic DNS updater that runs in a container. It updates your Cloudflare DNS A/AAAA records with your current public IP address. For more information about this tool, please visit the following website: https://github.com/jim60105/simple-cloudflare-ddns"
