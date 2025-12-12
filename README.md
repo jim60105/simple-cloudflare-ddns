@@ -1,6 +1,6 @@
-# simple-cloudflare-ddns
+# Simple Cloudflare DDNS Updater
 
-A simple Cloudflare Dynamic DNS updater that runs in a container. It updates your Cloudflare DNS A/AAAA records with your current public IP address.
+A simple Cloudflare Dynamic DNS updater running in a container that keeps your DNS records up to date.
 
 ## ✨ Features
 
@@ -193,11 +193,46 @@ The recommended way is to store credentials/IDs in a Kubernetes Secret and refer
 
 ## 🌐 Alternative IP Detection Services
 
-You can use any service that returns your public IP as plain text:
+### 🔒 Recommended: Deploy Your Own Service
+
+For maximum reliability and to avoid dependency on third-party services, I recommend deploying your own IP detection service using [Your IP - Cloudflare Worker](https://github.com/jim60105/worker-your-ip).
+
+**Why deploy your own?**
+
+- 🛡️ **Reliability**: Not vulnerable to third-party service outages or rate limits
+- 🔐 **Security**: Full control over your infrastructure
+- ⚡ **Performance**: Cloudflare's global edge network ensures fast response times
+- 💰 **Cost**: Free tier covers most personal use cases
+
+**Quick Deploy:**
+
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/jim60105/worker-your-ip)
+
+Once deployed, use your worker URL in environment variables:
+
+```bash
+-e IPV4_API_URL=https://your-worker.workers.dev/ipv4 \
+-e IPV6_API_URL=https://your-worker.workers.dev/ipv6
+```
+
+> [!Note]
+> I made this 😉
+
+### 🌍 Public Third-Party Services
+
+If you prefer using existing services, any service that returns your public IP as plain text works:
 
 - IPv4: `https://api.ipify.org`, `https://ifconfig.me`, `https://icanhazip.com`
 - IPv6: `https://api6.ipify.org`, `https://ifconfig.co`
 
 ## 📄 License
 
-This project is licensed under the AGPL-3.0-or-later License - see the [LICENSE](LICENSE) file for details.
+<img src="https://github.com/user-attachments/assets/7be89814-775c-4306-b323-bff9376a857e" alt="agplv3" width="300" />
+
+[GNU AFFERO GENERAL PUBLIC LICENSE Version 3](./LICENSE)
+
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
