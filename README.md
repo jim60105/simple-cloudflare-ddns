@@ -115,6 +115,7 @@ podman run --rm \
   -e API_TOKEN=your_token \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
+  -e A_RECORD_NAME=home.example.com \
   -e IPV4_API_URL=https://ifconfig.me/ip \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
