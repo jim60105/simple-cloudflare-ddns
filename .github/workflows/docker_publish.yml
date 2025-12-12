@@ -1,0 +1,42 @@
+# Check this guide for more information about publishing to ghcr.io with GitHub Actions:
+# https://docs.github.com/en/packages/managing-github-packages-using-github-actions-workflows/publishing-and-installing-a-package-with-github-actions#upgrading-a-workflow-that-accesses-ghcrio
+
+# Build the Docker image and push it to the registry
+name: docker_publish
+
+on:
+  # Trigger the workflow on master branch push
+  push:
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# Sets the permissions granted to the GITHUB_TOKEN for the actions in this job.
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE_NAME: simple-cloudflare-ddns
+
+jobs:
+  docker-publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6.0.1
+        with:
+          submodules: true
+
+      - name: Build and push container
+        uses: ./.github/workflows/container-reused-steps
+        with:
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          QUAY_USERNAME: ${{ secrets.QUAY_USERNAME }}
+          QUAY_TOKEN: ${{ secrets.QUAY_TOKEN }}
+          IMAGE_NAME: ${{ env.IMAGE_NAME }}
+          CONTAINERFILE: ./Containerfile
