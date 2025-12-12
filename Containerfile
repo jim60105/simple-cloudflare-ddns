@@ -16,10 +16,10 @@ FROM docker.io/curlimages/curl:8.17.0 AS base
 FROM base AS final
 
 # Copy licenses
-COPY --link --chown=$UID:0 --chmod=775 LICENSE /home/curl_user/
+COPY --link --chmod=775 LICENSE /home/curl_user/
 
 # Copy main script
-COPY --link --chown=$UID:0 --chmod=775 updateDNS.sh /home/curl_user/
+COPY --link --chmod=775 updateDNS.sh /home/curl_user/
 
 STOPSIGNAL SIGINT
 
