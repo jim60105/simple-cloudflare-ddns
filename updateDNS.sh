@@ -29,7 +29,6 @@
 #   AAAA_RECORD_NAME - Domain name for AAAA record (default: same as record in Cloudflare)
 #   IPV4_API_URL    - URL to get public IPv4 address (default: https://api.ipify.org)
 #   IPV6_API_URL    - URL to get public IPv6 address (default: https://api6.ipify.org)
-#   DATA_DIR        - Directory to store IP cache files (default: /data)
 #
 # HOW TO CREATE API TOKEN:
 #   1. Go to https://dash.cloudflare.com/profile/api-tokens
@@ -104,17 +103,6 @@ fetch_public_ip() {
     return 0
 }
 
-# Get cached IP from file, returns empty string if file doesn't exist
-# Arguments: $1 = cache file path
-get_cached_ip() {
-    cache_file="$1"
-    if [ -f "$cache_file" ]; then
-        cat "$cache_file"
-    else
-        echo ""
-    fi
-}
-
 # Update DNS record via Cloudflare API
 # Arguments: $1=record_id, $2=record_type, $3=record_name, $4=ip_content
 # Returns: 0 on success, 1 on failure
@@ -169,21 +157,10 @@ update_ipv4_record() {
     fi
 
     echo "Current IPv4: $new_ip"
-
-    # Check cache
-    cache_file="$DATA_DIR/current_ip.txt"
-    cached_ip=$(get_cached_ip "$cache_file")
-
-    if [ "$new_ip" = "$cached_ip" ]; then
-        echo "No change in IPv4 address"
-        return 0
-    fi
-
-    echo "IPv4 address changed from '$cached_ip' to '$new_ip', updating DNS..."
+    echo "Updating DNS..."
 
     if update_cloudflare_dns "$A_RECORD_ID" "A" "$A_RECORD_NAME" "$new_ip"; then
         echo "Successfully updated IPv4 A record${A_RECORD_NAME:+ for $A_RECORD_NAME}"
-        echo "$new_ip" > "$cache_file"
     else
         echo "Failed to update IPv4 A record"
         return 1
@@ -216,21 +193,10 @@ update_ipv6_record() {
     fi
 
     echo "Current IPv6: $new_ip"
-
-    # Check cache
-    cache_file="$DATA_DIR/current_ipv6.txt"
-    cached_ip=$(get_cached_ip "$cache_file")
-
-    if [ "$new_ip" = "$cached_ip" ]; then
-        echo "No change in IPv6 address"
-        return 0
-    fi
-
-    echo "IPv6 address changed from '$cached_ip' to '$new_ip', updating DNS..."
+    echo "Updating DNS..."
 
     if update_cloudflare_dns "$AAAA_RECORD_ID" "AAAA" "$AAAA_RECORD_NAME" "$new_ip"; then
         echo "Successfully updated IPv6 AAAA record${AAAA_RECORD_NAME:+ for $AAAA_RECORD_NAME}"
-        echo "$new_ip" > "$cache_file"
     else
         echo "Failed to update IPv6 AAAA record"
         return 1
@@ -271,10 +237,6 @@ main() {
     # Set default values for optional environment variables
     IPV4_API_URL="${IPV4_API_URL:-https://api.ipify.org}"
     IPV6_API_URL="${IPV6_API_URL:-https://api6.ipify.org}"
-    DATA_DIR="${DATA_DIR:-/data}"
-
-    # Ensure data directory exists
-    mkdir -p "$DATA_DIR"
 
     # Track if any update failed
     ipv4_result=0

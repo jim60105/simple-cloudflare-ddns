@@ -15,18 +15,11 @@ FROM docker.io/curlimages/curl:8.17.0 AS base
 ########################################
 FROM base AS final
 
-# Create directories with correct permissions
-RUN install -d -m 775 /home/curl_user/data && \
-    install -d -m 775 /home/curl_user/licenses
-
-# Copy licenses (OpenShift Policy)
-COPY --link --chown=$UID:0 --chmod=775 LICENSE /home/curl_user/licenses/
+# Copy licenses
+COPY --link --chown=$UID:0 --chmod=775 LICENSE /home/curl_user/
 
 # Copy main script
 COPY --link --chown=$UID:0 --chmod=775 updateDNS.sh /home/curl_user/
-
-# Persistent data directory for IP cache files
-VOLUME [ "/home/curl_user/data" ]
 
 STOPSIGNAL SIGINT
 

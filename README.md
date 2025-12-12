@@ -6,7 +6,6 @@ A simple Cloudflare Dynamic DNS updater that runs in a container. It updates you
 
 - Updates IPv4 (A record) and/or IPv6 (AAAA record) DNS records
 - Configurable via environment variables
-- Caches current IP to avoid unnecessary API calls
 - Supports custom IP detection services
 - Minimal container image based on curl
 
@@ -18,7 +17,6 @@ docker run --rm \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
   -e A_RECORD_NAME=subdomain.example.com \
-  -v ddns-data:/data \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
@@ -41,7 +39,6 @@ docker run --rm \
 | `AAAA_RECORD_NAME` | Domain name for AAAA record | - |
 | `IPV4_API_URL` | URL to get public IPv4 address | `https://api.ipify.org` |
 | `IPV6_API_URL` | URL to get public IPv6 address | `https://api6.ipify.org` |
-| `DATA_DIR` | Directory to store IP cache files | `/data` |
 
 ## Setup Guide
 
@@ -84,7 +81,6 @@ docker run --rm \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
   -e A_RECORD_NAME=home.example.com \
-  -v ddns-data:/data \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
@@ -96,7 +92,6 @@ docker run --rm \
   -e ZONE_ID=your_zone_id \
   -e AAAA_RECORD_ID=your_aaaa_record_id \
   -e AAAA_RECORD_NAME=home.example.com \
-  -v ddns-data:/data \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
@@ -110,7 +105,6 @@ docker run --rm \
   -e A_RECORD_NAME=home.example.com \
   -e AAAA_RECORD_ID=your_aaaa_record_id \
   -e AAAA_RECORD_NAME=home.example.com \
-  -v ddns-data:/data \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
@@ -122,7 +116,6 @@ docker run --rm \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
   -e IPV4_API_URL=https://ifconfig.me/ip \
-  -v ddns-data:/data \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
@@ -135,7 +128,7 @@ To run the updater periodically, you can use a cron job on the host:
 crontab -e
 
 # Add this line to run every 5 minutes
-*/5 * * * * docker run --rm -e API_TOKEN=... -e ZONE_ID=... -e A_RECORD_ID=... -v ddns-data:/data ghcr.io/jim60105/simple-cloudflare-ddns
+*/5 * * * * docker run --rm -e API_TOKEN=... -e ZONE_ID=... -e A_RECORD_ID=... ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
 Or use a container orchestration tool like Kubernetes CronJob.
