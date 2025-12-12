@@ -17,6 +17,8 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write  # Required for attestations
+  attestations: write  # Required for attestations
 
 env:
   IMAGE_NAME: simple-cloudflare-ddns
