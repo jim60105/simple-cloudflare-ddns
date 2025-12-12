@@ -12,7 +12,7 @@ A simple Cloudflare Dynamic DNS updater that runs in a container. It updates you
 ## Quick Start
 
 ```bash
-docker run --rm \
+podman run --rm \
   -e API_TOKEN=your_cloudflare_api_token \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
@@ -76,7 +76,7 @@ Find the record(s) you want to update and copy their `id` values.
 ### IPv4 Only
 
 ```bash
-docker run --rm \
+podman run --rm \
   -e API_TOKEN=your_token \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
@@ -87,7 +87,7 @@ docker run --rm \
 ### IPv6 Only
 
 ```bash
-docker run --rm \
+podman run --rm \
   -e API_TOKEN=your_token \
   -e ZONE_ID=your_zone_id \
   -e AAAA_RECORD_ID=your_aaaa_record_id \
@@ -98,7 +98,7 @@ docker run --rm \
 ### Both IPv4 and IPv6
 
 ```bash
-docker run --rm \
+podman run --rm \
   -e API_TOKEN=your_token \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
@@ -111,7 +111,7 @@ docker run --rm \
 ### With Custom IP Detection Service
 
 ```bash
-docker run --rm \
+podman run --rm \
   -e API_TOKEN=your_token \
   -e ZONE_ID=your_zone_id \
   -e A_RECORD_ID=your_a_record_id \
@@ -128,22 +128,10 @@ To run the updater periodically, you can use a cron job on the host:
 crontab -e
 
 # Add this line to run every 5 minutes
-*/5 * * * * docker run --rm -e API_TOKEN=... -e ZONE_ID=... -e A_RECORD_ID=... ghcr.io/jim60105/simple-cloudflare-ddns
+*/5 * * * * podman run --rm -e API_TOKEN=... -e ZONE_ID=... -e A_RECORD_ID=... ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
 Or use a container orchestration tool like Kubernetes CronJob.
-
-## Building the Image
-
-```bash
-docker build -t simple-cloudflare-ddns .
-```
-
-Or with Podman:
-
-```bash
-podman build -t simple-cloudflare-ddns .
-```
 
 ## Alternative IP Detection Services
 

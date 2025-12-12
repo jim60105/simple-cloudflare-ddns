@@ -30,9 +30,9 @@ ARG RELEASE
 LABEL name="jim60105/simple-cloudflare-ddns" \
     # Authors for simple-cloudflare-ddns script
     vendor="jim60105" \
-    # Maintainer for this docker image
+    # Maintainer for this image
     maintainer="jim60105" \
-    # Dockerfile source repository
+    # Source repository
     url="https://github.com/jim60105/simple-cloudflare-ddns" \
     version=${VERSION} \
     # This should be a number, incremented with each change
