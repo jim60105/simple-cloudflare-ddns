@@ -2,14 +2,14 @@
 
 A simple Cloudflare Dynamic DNS updater that runs in a container. It updates your Cloudflare DNS A/AAAA records with your current public IP address.
 
-## Features
+## ✨ Features
 
-- Updates IPv4 (A record) and/or IPv6 (AAAA record) DNS records
-- Configurable via environment variables
-- Supports custom IP detection services
-- Minimal container image based on curl
+- 🌍 Updates IPv4 (A record) and/or IPv6 (AAAA record) DNS records
+- ⚙️ Configurable via environment variables
+- 🔎 Supports custom IP detection services
+- 🪶 Minimal container image based on curl
 
-## Quick Start
+## 🚀 Quick Start
 
 ```bash
 podman run --rm \
@@ -20,7 +20,7 @@ podman run --rm \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-## Environment Variables
+## ⚙️ Environment Variables
 
 ### Required
 
@@ -40,9 +40,9 @@ podman run --rm \
 | `IPV4_API_URL` | URL to get public IPv4 address | `https://api.ipify.org` |
 | `IPV6_API_URL` | URL to get public IPv6 address | `https://api6.ipify.org` |
 
-## Setup Guide
+## 🛠️ Setup Guide
 
-### 1. Create Cloudflare API Token
+### 🔐 1. Create Cloudflare API Token
 
 1. Go to [Cloudflare API Tokens](https://dash.cloudflare.com/profile/api-tokens)
 2. Click **Create Token**
@@ -53,14 +53,14 @@ podman run --rm \
 7. Click **Continue to summary** then **Create Token**
 8. Copy the token for use as `API_TOKEN`
 
-### 2. Get Zone ID
+### 🆔 2. Get Zone ID
 
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/)
 2. Select your domain
 3. On the **Overview** page, find **Zone ID** in the right sidebar
 4. Copy it for use as `ZONE_ID`
 
-### 3. Get DNS Record IDs
+### 🧾 3. Get DNS Record IDs
 
 Run this command to list all DNS records in your zone:
 
@@ -71,9 +71,9 @@ curl -X GET "https://api.cloudflare.com/client/v4/zones/YOUR_ZONE_ID/dns_records
 
 Find the record(s) you want to update and copy their `id` values.
 
-## Usage Examples
+## 📌 Usage Examples
 
-### IPv4 Only
+### 🟦 IPv4 Only
 
 ```bash
 podman run --rm \
@@ -84,7 +84,7 @@ podman run --rm \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-### IPv6 Only
+### 🟪 IPv6 Only
 
 ```bash
 podman run --rm \
@@ -95,7 +95,7 @@ podman run --rm \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-### Both IPv4 and IPv6
+### 🔁 Both IPv4 and IPv6
 
 ```bash
 podman run --rm \
@@ -108,7 +108,7 @@ podman run --rm \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-### With Custom IP Detection Service
+### 🧭 With Custom IP Detection Service
 
 ```bash
 podman run --rm \
@@ -119,7 +119,7 @@ podman run --rm \
   ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-### Using with Cron (Scheduled Updates)
+### ⏱️ Using with Cron (Scheduled Updates)
 
 To run the updater periodically, you can use a cron job on the host:
 
@@ -131,15 +131,73 @@ crontab -e
 */5 * * * * podman run --rm -e API_TOKEN=... -e ZONE_ID=... -e A_RECORD_ID=... ghcr.io/jim60105/simple-cloudflare-ddns
 ```
 
-Or use a container orchestration tool like Kubernetes CronJob.
+### ☸️ Kubernetes CronJob
 
-## Alternative IP Detection Services
+The recommended way is to store credentials/IDs in a Kubernetes Secret and reference it from a CronJob.
+
+1. Create a Secret (replace values):
+
+   ```yaml
+   apiVersion: v1
+   kind: Secret
+   metadata:
+     name: cloudflare-ddns
+   type: Opaque
+   stringData:
+     API_TOKEN: "your_cloudflare_api_token"
+     ZONE_ID: "your_zone_id"
+     A_RECORD_ID: "your_a_record_id"
+     A_RECORD_NAME: "home.example.com"
+     # Optional (IPv6)
+     # AAAA_RECORD_ID: "your_aaaa_record_id"
+     # AAAA_RECORD_NAME: "home.example.com"
+   ```
+
+   Apply it:
+
+   ```bash
+   kubectl apply -f secret.yaml
+   ```
+
+2. Create a CronJob:
+
+   ```yaml
+   apiVersion: batch/v1
+   kind: CronJob
+   metadata:
+     name: simple-cloudflare-ddns
+   spec:
+     schedule: "*/5 * * * *"
+     concurrencyPolicy: Forbid
+     successfulJobsHistoryLimit: 1
+     failedJobsHistoryLimit: 3
+     jobTemplate:
+       spec:
+         template:
+           spec:
+             restartPolicy: Never
+             containers:
+               - name: ddns
+                 image: ghcr.io/jim60105/simple-cloudflare-ddns:latest
+                 imagePullPolicy: IfNotPresent
+                 envFrom:
+                   - secretRef:
+                       name: cloudflare-ddns
+   ```
+
+   Apply it:
+
+   ```bash
+   kubectl apply -f cronjob.yaml
+   ```
+
+## 🌐 Alternative IP Detection Services
 
 You can use any service that returns your public IP as plain text:
 
 - IPv4: `https://api.ipify.org`, `https://ifconfig.me`, `https://icanhazip.com`
 - IPv6: `https://api6.ipify.org`, `https://ifconfig.co`
 
-## License
+## 📄 License
 
 This project is licensed under the AGPL-3.0-or-later License - see the [LICENSE](LICENSE) file for details.
