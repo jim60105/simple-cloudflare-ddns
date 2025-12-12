@@ -1,0 +1,16 @@
+services:
+  simple-cloudflare-ddns:
+    image: ghcr.io/jim60105/simple-cloudflare-ddns:latest
+    container_name: simple-cloudflare-ddns
+    restart: "no"
+    env_file:
+      - .env
+    environment:
+      - API_TOKEN=${API_TOKEN}
+      - ZONE_ID=${ZONE_ID}
+      - A_RECORD_ID=${A_RECORD_ID:-}
+      - A_RECORD_NAME=${A_RECORD_NAME:-}
+      - AAAA_RECORD_ID=${AAAA_RECORD_ID:-}
+      - AAAA_RECORD_NAME=${AAAA_RECORD_NAME:-}
+      - IPV4_API_URL=${IPV4_API_URL:-https://api.ipify.org}
+      - IPV6_API_URL=${IPV6_API_URL:-https://api6.ipify.org}
