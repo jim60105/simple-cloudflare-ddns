@@ -1,5 +1,7 @@
 # Simple Cloudflare DDNS Updater
 
+[![preview](https://github.com/user-attachments/assets/8b6d9fcf-060d-44cf-81a5-7b52b082c2c0)](https://gemini.google.com/share/2b771b3d1735)
+
 A simple Cloudflare Dynamic DNS updater running in a container that keeps your DNS records up to date.
 
 ## ✨ Features
